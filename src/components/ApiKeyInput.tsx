@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { Key } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
 
 interface ApiKeyInputProps {
   onApiKeySaved: (apiKey: string) => void;
@@ -47,35 +48,38 @@ const ApiKeyInput = ({ onApiKeySaved }: ApiKeyInputProps) => {
   };
 
   return (
-    <div className="space-y-2">
-      <div className="flex items-center space-x-2">
-        <Input
-          type="password"
-          placeholder="Enter Gemini API Key"
-          value={apiKey}
-          onChange={(e) => setApiKey(e.target.value)}
-          className="flex-1"
-        />
-        <Button onClick={handleSaveApiKey}>Save</Button>
-      </div>
-
-      {savedKey && (
-        <div className="flex items-center justify-between p-2 bg-secondary rounded-md">
-          <div className="flex items-center">
-            <Key size={16} className="mr-2 text-primary" />
-            <span className="text-xs">API key saved</span>
-          </div>
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            onClick={handleClearApiKey}
-            className="h-6 text-xs"
-          >
-            Clear
-          </Button>
+    <Card className="bg-gradient-to-br from-white to-[#f3f0ff] shadow-md">
+      <CardContent className="p-4 space-y-3">
+        <h3 className="text-sm font-medium text-primary mb-2">Gemini API Key</h3>
+        <div className="flex items-center space-x-2">
+          <Input
+            type="password"
+            placeholder="Enter Gemini API Key"
+            value={apiKey}
+            onChange={(e) => setApiKey(e.target.value)}
+            className="flex-1 border-purple-100"
+          />
+          <Button onClick={handleSaveApiKey} className="bg-primary hover:bg-primary/90">Save</Button>
         </div>
-      )}
-    </div>
+
+        {savedKey && (
+          <div className="flex items-center justify-between p-2 bg-secondary rounded-md">
+            <div className="flex items-center">
+              <Key size={16} className="mr-2 text-primary" />
+              <span className="text-xs">API key saved</span>
+            </div>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={handleClearApiKey}
+              className="h-6 text-xs"
+            >
+              Clear
+            </Button>
+          </div>
+        )}
+      </CardContent>
+    </Card>
   );
 };
 

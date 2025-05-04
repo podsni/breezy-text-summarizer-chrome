@@ -13,7 +13,7 @@ const SummarizeButton = ({ onSummarize, isLoading, disabled }: SummarizeButtonPr
     <Button 
       onClick={onSummarize} 
       disabled={isLoading || disabled} 
-      className="w-full"
+      className="w-full bg-primary hover:bg-primary/90 shadow-sm"
     >
       {isLoading ? (
         <>

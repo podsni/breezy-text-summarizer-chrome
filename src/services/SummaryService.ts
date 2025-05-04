@@ -7,10 +7,14 @@ export interface SummaryResponse {
 
 export const extractPageContent = async (): Promise<string> => {
   try {
-    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+    const [tab] = await chrome.tabs?.query({ active: true, currentWindow: true }) || [{}];
+    
+    if (!tab || !tab.id) {
+      throw new Error("No active tab found");
+    }
     
     // Execute script to extract content from the active tab
-    const result = await chrome.scripting.executeScript({
+    const result = await chrome.scripting?.executeScript({
       target: { tabId: tab.id as number },
       function: () => {
         // Get the page title
@@ -26,10 +30,41 @@ export const extractPageContent = async (): Promise<string> => {
       }
     });
     
-    return result[0].result as string;
+    return result?.[0]?.result as string || '';
   } catch (error) {
     console.error('Error extracting page content:', error);
     return '';
+  }
+};
+
+export const fetchUrlContent = async (url: string): Promise<string> => {
+  try {
+    // Proxy the request through a CORS-enabled API
+    const response = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`);
+    
+    if (!response.ok) {
+      throw new Error(`Failed to fetch URL: ${response.statusText}`);
+    }
+    
+    const html = await response.text();
+    
+    // Extract content from HTML using DOM parser
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, 'text/html');
+    
+    // Get the page title
+    const title = doc.title;
+    
+    // Get all paragraph text (similar to the content extraction logic)
+    const paragraphs = Array.from(doc.querySelectorAll('p, h1, h2, h3, h4, h5, h6, li'))
+      .map(element => element.textContent)
+      .filter(text => text && text.trim().length > 20) // Filter out short text
+      .join('\n\n');
+    
+    return `${title}\n\n${paragraphs}`;
+  } catch (error) {
+    console.error('Error fetching URL content:', error);
+    throw new Error('Failed to fetch content from URL');
   }
 };
 
