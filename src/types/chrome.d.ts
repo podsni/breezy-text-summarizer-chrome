@@ -1,4 +1,10 @@
 
+interface ChromeTab {
+  id?: number;
+  url?: string;
+  title?: string;
+}
+
 interface Chrome {
   storage?: {
     sync?: {
@@ -8,7 +14,7 @@ interface Chrome {
     };
   };
   tabs?: {
-    query: (queryInfo: { active: boolean; currentWindow: boolean }, callback: (result: any[]) => void) => void;
+    query: (queryInfo: { active: boolean; currentWindow: boolean }, callback: (result: ChromeTab[]) => void) => void;
   };
   scripting?: {
     executeScript: (options: {

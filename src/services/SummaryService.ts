@@ -7,15 +7,23 @@ export interface SummaryResponse {
 
 export const extractPageContent = async (): Promise<string> => {
   try {
-    const [tab] = await chrome.tabs?.query({ active: true, currentWindow: true }) || [{}];
+    if (typeof chrome === 'undefined' || !chrome.tabs || !chrome.scripting) {
+      throw new Error("Chrome API not available");
+    }
+
+    const tabs = await new Promise<chrome.tabs.Tab[]>((resolve) => {
+      chrome.tabs.query({ active: true, currentWindow: true }, (result) => {
+        resolve(result);
+      });
+    });
     
-    if (!tab || !tab.id) {
+    if (!tabs || tabs.length === 0 || !tabs[0] || !tabs[0].id) {
       throw new Error("No active tab found");
     }
     
     // Execute script to extract content from the active tab
-    const result = await chrome.scripting?.executeScript({
-      target: { tabId: tab.id as number },
+    const result = await chrome.scripting.executeScript({
+      target: { tabId: tabs[0].id },
       function: () => {
         // Get the page title
         const title = document.title;

@@ -1,73 +1,133 @@
-# Welcome to your Lovable project
 
-## Project info
+# Breezy Text Summarizer - Chrome Extension
 
-**URL**: https://lovable.dev/projects/2e2f043e-c461-4624-8045-ff95bbf5db1b
+## Project Overview
 
-## How can I edit this code?
+Breezy Text Summarizer is a powerful Chrome extension that helps you quickly generate concise summaries of web pages using Google's Gemini AI. The extension offers two main ways to summarize content:
 
-There are several ways of editing your application.
+1. Summarize the current web page you're viewing
+2. Summarize content from any URL you provide
 
-**Use Lovable**
+## Features
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/2e2f043e-c461-4624-8045-ff95bbf5db1b) and start prompting.
+- **Current Page Summarization**: Extract and summarize the content of your active browser tab with one click
+- **URL-based Summarization**: Enter any URL to fetch and summarize its content
+- **Secure API Key Management**: Safely store your Gemini API key in Chrome's local storage
+- **Copy to Clipboard**: Easy one-click copying of generated summaries
+- **Modern UI**: Clean, responsive interface with a pleasant purple theme
 
-Changes made via Lovable will be committed automatically to this repo.
+## Installation Guide
 
-**Use your preferred IDE**
+### Development Installation
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+1. Clone this repository to your local machine
+   ```sh
+   git clone <YOUR_GIT_URL>
+   cd <YOUR_PROJECT_NAME>
+   ```
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+2. Install dependencies
+   ```sh
+   npm i
+   ```
 
-Follow these steps:
+3. Build the extension
+   ```sh
+   npm run build
+   ```
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+4. Load the extension in Chrome:
+   - Open Chrome and navigate to `chrome://extensions/`
+   - Enable "Developer mode" using the toggle in the top-right corner
+   - Click "Load unpacked" and select the `dist` folder from your project directory
+   - The Breezy Text Summarizer icon should now appear in your browser toolbar
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+### User Installation (When Published)
 
-# Step 3: Install the necessary dependencies.
-npm i
+1. Visit the Chrome Web Store
+2. Search for "Breezy Text Summarizer"
+3. Click "Add to Chrome"
+4. Confirm the installation when prompted
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
+## How to Use
 
-**Edit a file directly in GitHub**
+### Setting Up Your API Key
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+1. Click on the Breezy Text Summarizer icon in your Chrome toolbar
+2. In the popup window, look for the "Gemini API Key" section
+3. Enter your Gemini API key (obtain one from [Google AI Studio](https://makersuite.google.com/app/apikey))
+4. Click "Save" to store your API key securely in your browser
 
-**Use GitHub Codespaces**
+### Summarizing the Current Web Page
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+1. Navigate to the web page you want to summarize
+2. Click on the Breezy Text Summarizer icon
+3. Make sure the "Current Page" tab is selected
+4. Click the "Summarize This Page" button
+5. The summary will appear in a card below
 
-## What technologies are used for this project?
+### Summarizing Content from a URL
+
+1. Click on the Breezy Text Summarizer icon
+2. Switch to the "URL Input" tab
+3. Enter the complete URL you want to summarize
+4. Click the "Go" button
+5. The summary will appear in a card below
+
+### Managing Your Summary
+
+- To copy the summary to your clipboard, click the Copy icon in the top-right corner of the summary card
+- You'll see a green checkmark and a notification when the text has been copied
+
+## Troubleshooting
+
+- **The Summarize Button is Disabled**: Make sure you've saved a valid Gemini API key
+- **Error: "Could not extract content from this page"**: Some websites restrict content extraction; try the URL input method instead
+- **Error: "Failed to generate summary"**: Check that your API key is valid and has not expired
+- **Error: "Failed to fetch content from URL"**: Verify that the URL is correct and accessible
+
+## Privacy Information
+
+- Your API key is stored locally in your browser's storage
+- Content from web pages is only sent to Google's Gemini API for summarization
+- No data is permanently stored on external servers
+
+## Development
 
 This project is built with:
-
 - Vite
 - TypeScript
 - React
 - shadcn-ui
 - Tailwind CSS
 
-## How can I deploy this project?
+To make changes to the codebase:
+```sh
+# Install dependencies
+npm i
 
-Simply open [Lovable](https://lovable.dev/projects/2e2f043e-c461-4624-8045-ff95bbf5db1b) and click on Share -> Publish.
+# Start the development server
+npm run dev
 
-## Can I connect a custom domain to my Lovable project?
+# Build for production
+npm run build
+```
 
-Yes, you can!
+## Project Structure
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+- `/src/components` - React components
+- `/src/services` - API and services for summarization
+- `/src/types` - TypeScript type definitions
+- `/public` - Static assets and manifest
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+## Deployment
+
+To deploy this extension to the Chrome Web Store, follow these steps:
+1. Build the extension with `npm run build`
+2. Zip the contents of the `dist` directory
+3. Upload to the Chrome Developer Dashboard
+4. Submit for review
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
