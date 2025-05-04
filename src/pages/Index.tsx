@@ -6,7 +6,7 @@ import ApiKeyInput from "@/components/ApiKeyInput";
 import UrlInput from "@/components/UrlInput";
 import SummarizeButton from "@/components/SummarizeButton";
 import SummaryResult from "@/components/SummaryResult";
-import { extractPageContent, fetchUrlContent, generateSummary } from "@/services/SummaryService";
+import { extractPageContent, fetchUrlContent, generateSummary, ScrapedContent } from "@/services/SummaryService";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const Index = () => {
@@ -14,6 +14,7 @@ const Index = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [summary, setSummary] = useState<string>("");
   const [activeTab, setActiveTab] = useState<string>("webpage");
+  const [scrapedContent, setScrapedContent] = useState<ScrapedContent | null>(null);
 
   const handleApiKeySaved = (key: string) => {
     setApiKey(key);
@@ -31,15 +32,16 @@ const Index = () => {
     try {
       // Extract content from the current page
       const content = await extractPageContent();
+      setScrapedContent(content);
       
-      if (!content) {
+      if (!content.content) {
         toast.error("Could not extract content from this page");
         setIsLoading(false);
         return;
       }
 
       // Generate summary using the Gemini API
-      const result = await generateSummary(apiKey, content);
+      const result = await generateSummary(apiKey, content.content);
       
       if (result.success && result.summary) {
         setSummary(result.summary);
@@ -66,15 +68,16 @@ const Index = () => {
     try {
       // Fetch content from the provided URL
       const content = await fetchUrlContent(url);
+      setScrapedContent(content);
       
-      if (!content) {
+      if (!content.content) {
         toast.error("Could not extract content from this URL");
         setIsLoading(false);
         return;
       }
 
       // Generate summary using the Gemini API
-      const result = await generateSummary(apiKey, content);
+      const result = await generateSummary(apiKey, content.content);
       
       if (result.success && result.summary) {
         setSummary(result.summary);
@@ -133,9 +136,14 @@ const Index = () => {
           </div>
         )}
         
-        {!isLoading && summary && <SummaryResult summary={summary} />}
+        {!isLoading && (summary || scrapedContent) && 
+          <SummaryResult 
+            summary={summary} 
+            scrapedContent={scrapedContent || undefined} 
+          />
+        }
         
-        {!isLoading && !summary && (
+        {!isLoading && !summary && !scrapedContent && (
           <div className="text-center text-gray-500 p-6 bg-white/50 rounded-lg">
             <p>{activeTab === "webpage" ? 
               "Click \"Summarize This Page\" to generate a summary of the current webpage." : 

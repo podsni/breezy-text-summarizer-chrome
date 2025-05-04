@@ -12,8 +12,10 @@ Breezy Text Summarizer is a powerful Chrome extension that helps you quickly gen
 
 - **Current Page Summarization**: Extract and summarize the content of your active browser tab with one click
 - **URL-based Summarization**: Enter any URL to fetch and summarize its content
+- **Original Content View**: View the extracted content before summarization
+- **Content Metadata**: See word count, reading time, and source information
 - **Secure API Key Management**: Safely store your Gemini API key in Chrome's local storage
-- **Copy to Clipboard**: Easy one-click copying of generated summaries
+- **Copy to Clipboard**: Easy one-click copying of generated summaries or original content
 - **Modern UI**: Clean, responsive interface with a pleasant purple theme
 
 ## Installation Guide
@@ -64,7 +66,10 @@ Breezy Text Summarizer is a powerful Chrome extension that helps you quickly gen
 2. Click on the Breezy Text Summarizer icon
 3. Make sure the "Current Page" tab is selected
 4. Click the "Summarize This Page" button
-5. The summary will appear in a card below
+5. The extension will:
+   - Extract the page content
+   - Display metadata (word count, reading time)
+   - Generate an AI summary
 
 ### Summarizing Content from a URL
 
@@ -72,11 +77,24 @@ Breezy Text Summarizer is a powerful Chrome extension that helps you quickly gen
 2. Switch to the "URL Input" tab
 3. Enter the complete URL you want to summarize
 4. Click the "Go" button
-5. The summary will appear in a card below
+5. The extension will:
+   - Fetch and extract content from the URL
+   - Display metadata (word count, reading time)
+   - Generate an AI summary
+
+### Viewing Content and Summaries
+
+- Switch between "Summary" and "Original Content" tabs to compare
+- The summary tab shows the AI-generated summary
+- The original content tab shows the extracted text from the webpage
+- Metadata displayed includes:
+  - Source URL
+  - Word count
+  - Estimated reading time
 
 ### Managing Your Summary
 
-- To copy the summary to your clipboard, click the Copy icon in the top-right corner of the summary card
+- To copy the summary or original content to your clipboard, click the Copy icon in the top-right corner of the respective tab
 - You'll see a green checkmark and a notification when the text has been copied
 
 ## Troubleshooting
@@ -112,21 +130,6 @@ npm run dev
 # Build for production
 npm run build
 ```
-
-## Project Structure
-
-- `/src/components` - React components
-- `/src/services` - API and services for summarization
-- `/src/types` - TypeScript type definitions
-- `/public` - Static assets and manifest
-
-## Deployment
-
-To deploy this extension to the Chrome Web Store, follow these steps:
-1. Build the extension with `npm run build`
-2. Zip the contents of the `dist` directory
-3. Upload to the Chrome Developer Dashboard
-4. Submit for review
 
 ## License
 

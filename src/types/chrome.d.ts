@@ -8,9 +8,9 @@ interface ChromeTab {
 interface Chrome {
   storage?: {
     sync?: {
-      get: (keys: string[], callback: (result: any) => void) => void;
+      get: (keys: string[] | string | null, callback: (result: any) => void) => void;
       set: (items: object, callback?: () => void) => void;
-      remove: (keys: string[], callback?: () => void) => void;
+      remove: (keys: string[] | string, callback?: () => void) => void;
     };
   };
   tabs?: {
@@ -24,4 +24,8 @@ interface Chrome {
   };
 }
 
-declare const chrome: Chrome;
+declare global {
+  const chrome: Chrome;
+}
+
+export {};

@@ -5,14 +5,25 @@ export interface SummaryResponse {
   error?: string;
 }
 
-export const extractPageContent = async (): Promise<string> => {
+export interface ScrapedContent {
+  title: string;
+  content: string;
+  metadata: {
+    url?: string;
+    timestamp: string;
+    readingTime: string;
+    wordCount: number;
+  };
+}
+
+export const extractPageContent = async (): Promise<ScrapedContent> => {
   try {
     if (typeof chrome === 'undefined' || !chrome.tabs || !chrome.scripting) {
       throw new Error("Chrome API not available");
     }
 
-    const tabs = await new Promise<chrome.tabs.Tab[]>((resolve) => {
-      chrome.tabs.query({ active: true, currentWindow: true }, (result) => {
+    const tabs = await new Promise<ChromeTab[]>((resolve) => {
+      chrome.tabs?.query({ active: true, currentWindow: true }, (result) => {
         resolve(result);
       });
     });
@@ -27,25 +38,66 @@ export const extractPageContent = async (): Promise<string> => {
       function: () => {
         // Get the page title
         const title = document.title;
+        const url = window.location.href;
         
-        // Get all paragraph text
-        const paragraphs = Array.from(document.querySelectorAll('p, h1, h2, h3, h4, h5, h6, li'))
-          .map(element => element.textContent)
+        // Get meta description if available
+        const metaDescription = document.querySelector('meta[name="description"]')?.getAttribute('content') || '';
+        
+        // Get all paragraph text and headings
+        const paragraphs = Array.from(document.querySelectorAll('p, h1, h2, h3, h4, h5, h6, li, article, section'))
+          .map(element => element.textContent?.trim())
           .filter(text => text && text.trim().length > 20) // Filter out short text
           .join('\n\n');
         
-        return `${title}\n\n${paragraphs}`;
+        // Calculate word count
+        const wordCount = paragraphs.split(/\s+/).length;
+        
+        // Estimate reading time (average reading speed: 200 words per minute)
+        const readingTimeMinutes = Math.max(1, Math.ceil(wordCount / 200));
+        const readingTime = `${readingTimeMinutes} min read`;
+        
+        // Get current timestamp
+        const timestamp = new Date().toISOString();
+        
+        const content = `${metaDescription ? metaDescription + '\n\n' : ''}${paragraphs}`;
+        
+        return {
+          title,
+          content,
+          metadata: {
+            url,
+            timestamp,
+            readingTime,
+            wordCount
+          }
+        };
       }
     });
     
-    return result?.[0]?.result as string || '';
+    return result?.[0]?.result as ScrapedContent || {
+      title: '',
+      content: '',
+      metadata: {
+        timestamp: new Date().toISOString(),
+        readingTime: '0 min read',
+        wordCount: 0
+      }
+    };
   } catch (error) {
     console.error('Error extracting page content:', error);
-    return '';
+    return {
+      title: '',
+      content: '',
+      metadata: {
+        timestamp: new Date().toISOString(),
+        readingTime: '0 min read',
+        wordCount: 0
+      }
+    };
   }
 };
 
-export const fetchUrlContent = async (url: string): Promise<string> => {
+export const fetchUrlContent = async (url: string): Promise<ScrapedContent> => {
   try {
     // Proxy the request through a CORS-enabled API
     const response = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`);
@@ -63,13 +115,37 @@ export const fetchUrlContent = async (url: string): Promise<string> => {
     // Get the page title
     const title = doc.title;
     
-    // Get all paragraph text (similar to the content extraction logic)
-    const paragraphs = Array.from(doc.querySelectorAll('p, h1, h2, h3, h4, h5, h6, li'))
-      .map(element => element.textContent)
+    // Get meta description if available
+    const metaDescription = doc.querySelector('meta[name="description"]')?.getAttribute('content') || '';
+    
+    // Get all paragraph text and headings
+    const paragraphs = Array.from(doc.querySelectorAll('p, h1, h2, h3, h4, h5, h6, li, article, section'))
+      .map(element => element.textContent?.trim())
       .filter(text => text && text.trim().length > 20) // Filter out short text
       .join('\n\n');
     
-    return `${title}\n\n${paragraphs}`;
+    // Calculate word count
+    const wordCount = paragraphs.split(/\s+/).length;
+    
+    // Estimate reading time (average reading speed: 200 words per minute)
+    const readingTimeMinutes = Math.max(1, Math.ceil(wordCount / 200));
+    const readingTime = `${readingTimeMinutes} min read`;
+    
+    // Get current timestamp
+    const timestamp = new Date().toISOString();
+    
+    const content = `${metaDescription ? metaDescription + '\n\n' : ''}${paragraphs}`;
+    
+    return {
+      title,
+      content,
+      metadata: {
+        url,
+        timestamp,
+        readingTime,
+        wordCount
+      }
+    };
   } catch (error) {
     console.error('Error fetching URL content:', error);
     throw new Error('Failed to fetch content from URL');
